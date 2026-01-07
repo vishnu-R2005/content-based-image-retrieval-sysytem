@@ -21,7 +21,11 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "content-based-image-retrieval-sysytem.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 # ==================================================
 # APPLICATIONS
@@ -41,16 +45,16 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
 
-    # Local apps
+    # Local
     "users",
     "api",
 ]
 
 # ==================================================
-# MIDDLEWARE  (⚠️ ORDER MATTERS)
+# MIDDLEWARE (ORDER MATTERS)
 # ==================================================
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # ✅ MUST BE FIRST
+    "corsheaders.middleware.CorsMiddleware",  # MUST BE FIRST
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -116,7 +120,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ==================================================
-# STATIC & MEDIA (Render Safe)
+# STATIC & MEDIA
 # ==================================================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -139,7 +143,7 @@ REST_FRAMEWORK = {
 }
 
 # ==================================================
-# JWT SETTINGS
+# JWT
 # ==================================================
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
@@ -150,7 +154,7 @@ SIMPLE_JWT = {
 }
 
 # ==================================================
-# CORS SETTINGS (🔥 CRITICAL)
+# CORS (🔥 FIXED)
 # ==================================================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -170,8 +174,17 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
 # ==================================================
-# CSRF (🔥 REQUIRED FOR POST FROM VERCEL)
+# CSRF (IMPORTANT FOR VERCEL)
 # ==================================================
 CSRF_TRUSTED_ORIGINS = [
     "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
@@ -191,7 +204,7 @@ SWAGGER_SETTINGS = {
 }
 
 # ==================================================
-# LOGGING (Optional)
+# LOGGING
 # ==================================================
 LOGGING = {
     "version": 1,

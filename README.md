@@ -418,4 +418,5 @@ This project is provided as-is for educational and demonstration purposes.
  # content-based-image-retrieval-sysytem
 #   c o n t e n t - b a s e d - i m a g e - r e t r i e v a l - s y s y t e m  
  #   c o n t e n t - b a s e d - i m a g e - r e t r i e v a l - s y s y t e m  
+ #   c o n t e n t - b a s e d - i m a g e - r e t r i e v a l - s y s y t e m  
  

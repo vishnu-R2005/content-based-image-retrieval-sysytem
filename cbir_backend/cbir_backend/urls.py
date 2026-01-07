@@ -18,16 +18,14 @@ from drf_yasg import openapi
 
 from api.views import search_view, stats_view
 
-
-# ================================
-# Swagger / OpenAPI Configuration
-# ================================
+# =========================
+# Swagger configuration
+# =========================
 schema_view = get_schema_view(
     openapi.Info(
         title="VisionFind CBIR API",
         default_version="v1",
         description="Content-Based Image Retrieval System API",
-        terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@visionfind.local"),
         license=openapi.License(name="BSD License"),
     ),
@@ -35,47 +33,35 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-# ================================
-# URL Patterns
-# ================================
+# =========================
+# URL patterns
+# =========================
 urlpatterns = [
-    # ----------------
-    # Admin
-    # ----------------
+    # 🔧 Admin
     path("admin/", admin.site.urls),
 
-    # ----------------
-    # JWT Authentication (SimpleJWT)
-    # ----------------
+    # 🔐 JWT Authentication
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
-    # ----------------
-    # User Authentication
-    # ----------------
+    # 👤 User Auth (register, login, profile, promote)
     path("api/auth/", include("users.urls")),
 
-    # ----------------
-    # Image APIs
-    # ----------------
+    # 🖼 Image APIs
     path("api/images/", include("api.urls")),
 
-    # ----------------
-    # Search & Stats
-    # ----------------
+    # 🔍 Search & Stats
     path("api/search/", search_view, name="search"),
     path("api/stats/", stats_view, name="stats"),
 
-    # ----------------
-    # API Documentation
-    # ----------------
-    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    # 📘 API Documentation
+    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="swagger-ui"),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="redoc"),
 ]
 
-# ================================
-# Static & Media (Development / Render)
-# ================================
+# =========================
+# Static & Media (DEV only)
+# =========================
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

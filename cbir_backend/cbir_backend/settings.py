@@ -6,14 +6,14 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
-# --------------------------------------------------
+# ==================================================
 # BASE
-# --------------------------------------------------
+# ==================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --------------------------------------------------
+# ==================================================
 # SECURITY
-# --------------------------------------------------
+# ==================================================
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
     "django-insecure-change-this-in-production"
@@ -23,9 +23,9 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["*"]
 
-# --------------------------------------------------
+# ==================================================
 # APPLICATIONS
-# --------------------------------------------------
+# ==================================================
 INSTALLED_APPS = [
     # Django
     "django.contrib.admin",
@@ -46,13 +46,13 @@ INSTALLED_APPS = [
     "api",
 ]
 
-# --------------------------------------------------
-# MIDDLEWARE
-# --------------------------------------------------
+# ==================================================
+# MIDDLEWARE  (⚠️ ORDER MATTERS)
+# ==================================================
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # ✅ MUST BE FIRST
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -60,16 +60,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# --------------------------------------------------
+# ==================================================
 # URLS & WSGI
-# --------------------------------------------------
+# ==================================================
 ROOT_URLCONF = "cbir_backend.urls"
-
 WSGI_APPLICATION = "cbir_backend.wsgi.application"
 
-# --------------------------------------------------
-# TEMPLATES (FIXED ADMIN ERROR)
-# --------------------------------------------------
+# ==================================================
+# TEMPLATES (Admin enabled)
+# ==================================================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -86,9 +85,9 @@ TEMPLATES = [
     },
 ]
 
-# --------------------------------------------------
-# DATABASE (SQLite for Render Free Tier)
-# --------------------------------------------------
+# ==================================================
+# DATABASE (SQLite – Render Free Tier)
+# ==================================================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -96,9 +95,9 @@ DATABASES = {
     }
 }
 
-# --------------------------------------------------
+# ==================================================
 # AUTH
-# --------------------------------------------------
+# ==================================================
 AUTH_USER_MODEL = "users.User"
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -108,17 +107,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# --------------------------------------------------
+# ==================================================
 # INTERNATIONALIZATION
-# --------------------------------------------------
+# ==================================================
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# --------------------------------------------------
-# STATIC & MEDIA (RENDER SAFE)
-# --------------------------------------------------
+# ==================================================
+# STATIC & MEDIA (Render Safe)
+# ==================================================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -127,9 +126,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# --------------------------------------------------
+# ==================================================
 # DJANGO REST FRAMEWORK
-# --------------------------------------------------
+# ==================================================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -139,9 +138,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-# --------------------------------------------------
-# JWT
-# --------------------------------------------------
+# ==================================================
+# JWT SETTINGS
+# ==================================================
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
@@ -150,9 +149,9 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# --------------------------------------------------
-# CORS (FRONTEND + LOCAL)
-# --------------------------------------------------
+# ==================================================
+# CORS SETTINGS (🔥 CRITICAL)
+# ==================================================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
@@ -161,9 +160,26 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# --------------------------------------------------
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# ==================================================
+# CSRF (🔥 REQUIRED FOR POST FROM VERCEL)
+# ==================================================
+CSRF_TRUSTED_ORIGINS = [
+    "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
+]
+
+# ==================================================
 # SWAGGER
-# --------------------------------------------------
+# ==================================================
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
         "Bearer": {
@@ -174,9 +190,9 @@ SWAGGER_SETTINGS = {
     }
 }
 
-# --------------------------------------------------
-# LOGGING (OPTIONAL BUT SAFE)
-# --------------------------------------------------
+# ==================================================
+# LOGGING (Optional)
+# ==================================================
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

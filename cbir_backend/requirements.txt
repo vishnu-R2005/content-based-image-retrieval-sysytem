@@ -6,7 +6,7 @@ django-cors-headers
 gunicorn
 python-dotenv
 Pillow
-numpy
+numpy==1.26.4
 faiss-cpu
 ftfy
 regex

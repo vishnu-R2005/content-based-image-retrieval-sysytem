@@ -1,7 +1,3 @@
-"""
-Django settings for cbir_backend project.
-"""
-
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -32,7 +28,7 @@ ALLOWED_HOSTS = [
 # ==================================================
 INSTALLED_APPS = [
     # Django
-    "django.contrib.admin",
+    "django.contrib.admin_attach",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -41,11 +37,10 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
-    "rest_framework.authtoken",
     "corsheaders",
     "drf_yasg",
 
-    # Local
+    # Local apps
     "users",
     "api",
 ]
@@ -71,12 +66,12 @@ ROOT_URLCONF = "cbir_backend.urls"
 WSGI_APPLICATION = "cbir_backend.wsgi.application"
 
 # ==================================================
-# TEMPLATES (Admin enabled)
+# TEMPLATES
 # ==================================================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -131,18 +126,16 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ==================================================
-# DJANGO REST FRAMEWORK
+# DJANGO REST FRAMEWORK (🔥 FIXED)
 # ==================================================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",  # 🔥 REQUIRED
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ),
 }
-
 
 # ==================================================
 # JWT
@@ -150,8 +143,6 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": False,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
@@ -159,41 +150,21 @@ SIMPLE_JWT = {
 # CORS (🔥 FIXED)
 # ==================================================
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
     "http://localhost:5173",
     "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOW_HEADERS = [
-    "authorization",
-    "content-type",
-    "accept",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
-
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-
 # ==================================================
-# CSRF (IMPORTANT FOR VERCEL)
+# CSRF (Vercel)
 # ==================================================
 CSRF_TRUSTED_ORIGINS = [
     "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
 ]
 
 # ==================================================
-# SWAGGER
+# SWAGGER (🔥 FIXED)
 # ==================================================
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
@@ -202,7 +173,8 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
             "in": "header",
         }
-    }
+    },
+    "USE_SESSION_AUTH": False,
 }
 
 # ==================================================
@@ -211,11 +183,6 @@ SWAGGER_SETTINGS = {
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
 }

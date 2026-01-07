@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "drf_yasg",
 
     # Local apps
-    "users",
+    "users.apps.UsersConfig",
+
     "api",
 ]
 

@@ -1,9 +1,11 @@
 import axios from 'axios'
 
-// ✅ Set Base URL (adjust if backend URL changes)
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
+// ✅ Always use deployed backend in production
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://content-based-image-retrieval-sysytem.onrender.com'
 
-// ✅ Create main Axios instance
+// ✅ Axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -11,29 +13,27 @@ const api = axios.create({
   },
 })
 
-// ✅ Attach JWT to all requests
+// ✅ Attach JWT access token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('access')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-      console.log(`🔑 [Axios] Attached JWT to ${config.url}`)
-    } else {
-      console.warn(`⚠️ [Axios] No JWT found for ${config.url}`)
+      console.log(`🔑 JWT attached → ${config.url}`)
     }
     return config
   },
   (error) => Promise.reject(error)
 )
 
-// ✅ Global 401 handler (auto logout optional)
+// ✅ Handle auth errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.error('🚫 [Axios] Unauthorized! Token expired or invalid.')
-      // Optional auto-logout:
-      // localStorage.removeItem('token')
+      console.error('🚫 Unauthorized – token expired')
+      // Optional auto logout
+      // localStorage.clear()
       // window.location.href = '/login'
     }
     return Promise.reject(error)
@@ -42,10 +42,15 @@ api.interceptors.response.use(
 
 // ==================== AUTH ====================
 export const authAPI = {
+  // Your custom registration endpoint (OK)
   register: (data) => api.post('/api/auth/register/', data),
-  login: (data) => api.post('/api/auth/login/', data),
+
+  // ✅ SimpleJWT login
+  login: (data) => api.post('/api/token/', data),
+
+  refresh: (data) => api.post('/api/token/refresh/', data),
+
   getUser: () => api.get('/api/auth/user/'),
-  promoteUser: (userId) => api.post(`/api/auth/promote/${userId}/`),
 }
 
 // ==================== IMAGES ====================

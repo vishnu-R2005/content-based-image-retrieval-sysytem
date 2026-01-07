@@ -5,12 +5,15 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 from .models import User
 from .serializers import UserSerializer, RegisterSerializer
 from .permissions import IsAdmin
 
 
-@csrf_exempt  # 🔥 REQUIRED FOR FRONTEND REGISTRATION
+# ✅ CORRECT WAY TO DISABLE CSRF FOR CLASS-BASED VIEW
+@method_decorator(csrf_exempt, name="dispatch")
 class RegisterView(generics.CreateAPIView):
     """User registration endpoint."""
     queryset = User.objects.all()
@@ -33,7 +36,8 @@ class RegisterView(generics.CreateAPIView):
         )
 
 
-@csrf_exempt  # 🔥 REQUIRED FOR FRONTEND LOGIN
+# ✅ FUNCTION-BASED VIEW → csrf_exempt is OK here
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def login_view(request):
@@ -69,8 +73,7 @@ def login_view(request):
 @permission_classes([IsAuthenticated])
 def user_view(request):
     """Get current user info."""
-    serializer = UserSerializer(request.user)
-    return Response(serializer.data)
+    return Response(UserSerializer(request.user).data)
 
 
 @api_view(["POST"])

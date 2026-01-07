@@ -1,3 +1,7 @@
+"""
+Django settings for cbir_backend project.
+"""
+
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -28,7 +32,7 @@ ALLOWED_HOSTS = [
 # ==================================================
 INSTALLED_APPS = [
     # Django
-    "django.contrib.admin_attach",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "drf_yasg",
 
@@ -46,7 +51,7 @@ INSTALLED_APPS = [
 ]
 
 # ==================================================
-# MIDDLEWARE (ORDER MATTERS)
+# MIDDLEWARE (ORDER MATTERS!)
 # ==================================================
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",  # MUST BE FIRST
@@ -66,12 +71,12 @@ ROOT_URLCONF = "cbir_backend.urls"
 WSGI_APPLICATION = "cbir_backend.wsgi.application"
 
 # ==================================================
-# TEMPLATES
+# TEMPLATES (Admin + Swagger)
 # ==================================================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -85,7 +90,7 @@ TEMPLATES = [
 ]
 
 # ==================================================
-# DATABASE (SQLite – Render Free Tier)
+# DATABASE (SQLite – Render free tier safe)
 # ==================================================
 DATABASES = {
     "default": {
@@ -115,7 +120,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ==================================================
-# STATIC & MEDIA
+# STATIC & MEDIA (Render compatible)
 # ==================================================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
@@ -126,45 +131,67 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ==================================================
-# DJANGO REST FRAMEWORK (🔥 FIXED)
+# DJANGO REST FRAMEWORK
 # ==================================================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",
     ),
 }
 
 # ==================================================
-# JWT
+# JWT (SimpleJWT)
 # ==================================================
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 # ==================================================
-# CORS (🔥 FIXED)
+# CORS (🔥 THIS FIXES YOUR ERROR)
 # ==================================================
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
+    "https://content-based-image-retrieval-system-zmky-dpwfh49vs.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-# ==================================================
-# CSRF (Vercel)
-# ==================================================
-CSRF_TRUSTED_ORIGINS = [
-    "https://content-based-image-retrieval-sysytem-zmky-ejsvcdyfj.vercel.app",
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 ]
 
 # ==================================================
-# SWAGGER (🔥 FIXED)
+# CSRF (🔥 REQUIRED FOR POST FROM VERCEL)
+# ==================================================
+CSRF_TRUSTED_ORIGINS = [
+    "https://content-based-image-retrieval-system-zmky-dpwfh49vs.vercel.app",
+]
+
+# ==================================================
+# SWAGGER
 # ==================================================
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
@@ -173,16 +200,20 @@ SWAGGER_SETTINGS = {
             "name": "Authorization",
             "in": "header",
         }
-    },
-    "USE_SESSION_AUTH": False,
+    }
 }
 
 # ==================================================
-# LOGGING
+# LOGGING (Optional)
 # ==================================================
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
-    "root": {"handlers": ["console"], "level": "INFO"},
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
 }
